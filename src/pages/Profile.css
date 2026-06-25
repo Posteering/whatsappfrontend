@@ -1,0 +1,27 @@
+.profile-container { padding: 40px 8% 120px; background: var(--bg-light); min-height: 100vh; }
+.profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+
+.profile-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 30px; }
+
+.profile-main-card {
+    background: white; padding: 50px; border-radius: 40px; text-align: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.profile-avatar {
+    width: 100px; height: 100px; background: var(--primary-orange); color: white;
+    font-size: 3rem; font-weight: 900; border-radius: 50%; display: flex;
+    justify-content: center; align-items: center; margin: 0 auto 20px;
+}
+
+.cat-badge { background: var(--soft-green); color: var(--primary-green); padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
+
+.profile-details-list { background: white; padding: 40px; border-radius: 40px; box-shadow: var(--shadow-soft); }
+
+.detail-item { display: flex; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid #f5f5f5; }
+.detail-item:last-child { border: none; }
+.d-icon { font-size: 1.5rem; color: var(--primary-orange); }
+.detail-item label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+.detail-item p { margin: 5px 0 0; font-weight: 600; font-size: 1.1rem; }
+
+@media (max-width: 800px) { .profile-grid { grid-template-columns: 1fr; } }

@@ -1,0 +1,211 @@
+/* 1. Main Layout Container */
+.login-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-light); /* F9FAFB from App.css */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 2. Login Card Styling */
+.login-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px; /* Keeps it professional and centered */
+    padding: 48px 40px;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* 3. Logo & Typography */
+.login-logo {
+    color: var(--primary-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.login-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 35px;
+}
+
+/* 4. Form & Input Fields */
+.login-form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 22px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    color: var(--text-main);
+}
+
+.input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.input-box input {
+    width: 100%;
+    height: 54px; /* Professional standard height */
+    padding: 0 15px 0 48px;
+    border-radius: 16px;
+    border: 1.5px solid #EAEAEA;
+    background: #FDFDFD;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-box input:focus {
+    border-color: var(--primary-orange);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.08);
+}
+
+/* 5. The Pill Button (Accurate Size) */
+.btn-login-submit {
+    margin: 15px auto 0; /* Centered */
+    background: var(--primary-orange);
+    color: #ffffff;
+    border: none;
+    padding: 14px 40px; /* Precise padding for a normal pill look */
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: fit-content; /* Not too long, stays accurate */
+    min-width: 200px; /* Ensures it doesn't get too tiny */
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 122, 0, 0.15);
+}
+
+.btn-login-submit:hover {
+    background: #E66E00;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(255, 122, 0, 0.25);
+}
+
+.btn-login-submit:disabled {
+    background: #CCCCCC;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 6. Footer Links */
+.login-footer {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.login-footer a {
+    color: var(--primary-orange);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* 7. Quality Mobile Responsiveness */
+
+/* iPhone SE / Smaller Phones */
+@media (max-width: 375px) {
+    .login-card {
+        padding: 35px 25px;
+        border-radius: 24px;
+    }
+    
+    .login-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn-login-submit {
+        width: 100%; /* On very tiny screens, full width is safer for thumbs */
+        padding: 14px 20px;
+    }
+}
+
+/* Standard Mobile Phones */
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 15px;
+    }
+    
+    .login-card {
+        max-width: 100%;
+        box-shadow: none; /* Cleaner for mobile */
+        border: none;
+        background: transparent;
+    }
+
+    /* Keep the card background if you prefer, or remove it for a 'flat' mobile look */
+    .login-card {
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,0,0,0.01);
+    }
+}
+
+/* Tablets / iPads */
+@media (min-width: 768px) {
+    .login-card {
+        padding: 50px;
+    }
+}
+
+/* Animations */
+.spinner {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

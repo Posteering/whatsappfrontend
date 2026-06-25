@@ -1,0 +1,113 @@
+.catalog-container {
+    padding: 40px 8% 120px;
+    background: var(--bg-light);
+    min-height: 100vh;
+}
+
+.catalog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.catalog-header h1 { font-size: 2.2rem; font-weight: 800; color: var(--text-main); }
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.catalog-card {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: 0.3s;
+}
+
+.card-image-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.catalog-card:hover .image-overlay { opacity: 1; }
+.catalog-card:hover img { transform: scale(1.1); }
+
+.overlay-btn {
+    background: white;
+    padding: 10px 18px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.delete-btn { color: #ff4d4d; }
+
+.card-details { padding: 25px; }
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.cat-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    background: var(--soft-green);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.price-tag {
+    font-weight: 800;
+    color: var(--primary-orange);
+    font-size: 1.1rem;
+}
+
+.card-details h4 {
+    font-size: 1.3rem;
+    margin: 0 0 15px 0;
+    color: var(--text-main);
+}
+
+.card-footer {
+    border-top: 1px solid #f5f5f5;
+    padding-top: 15px;
+    display: flex;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.ai-status { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.ai-status:hover { color: var(--primary-green); }

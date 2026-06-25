@@ -1,0 +1,35 @@
+.top-nav-fixed {
+    position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+    background: white; display: flex; justify-content: space-between;
+    align-items: center; padding: 0 8%; z-index: 1000;
+    border-bottom: 1px solid #eee;
+}
+
+.ham-overlay {
+    position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+    z-index: 2000; transition: 0.4s;
+}
+
+.ham-overlay.active { right: 0; }
+
+.ham-card {
+    position: absolute; right: 0; width: 85%; max-width: 400px;
+    height: 100%; background: white; padding: 40px;
+}
+
+.ham-link { font-size: 1.8rem; font-weight: 800; margin-bottom: 25px; cursor: pointer; }
+.logout-red { color: #ff4d4d; margin-top: 50px; display: flex; align-items: center; gap: 10px; }
+
+.sub-links-container { padding-left: 20px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+.sub-item { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text-muted); }
+
+.bottom-pill-container {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 400px; z-index: 1000;
+}
+
+.bottom-pill {
+    background: var(--text-main); color: white; display: flex;
+    justify-content: space-around; padding: 15px; border-radius: 40px;
+}

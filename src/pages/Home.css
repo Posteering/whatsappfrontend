@@ -1,0 +1,55 @@
+.home-wrapper {
+    background: var(--bg-light);
+    min-height: 100vh;
+    padding-bottom: 120px;
+}
+
+.home-hero {
+    padding: 100px 8% 60px;
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.premium-tag {
+    background: var(--soft-green);
+    color: var(--primary-green);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.home-hero h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 20px; }
+.home-hero p { color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin-bottom: 40px; }
+
+.home-hero-actions { display: flex; gap: 20px; }
+
+.home-insights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 60px 8%;
+}
+
+.insight-card {
+    background: white;
+    padding: 40px;
+    border-radius: 35px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.icon-circle {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+}
+
+.icon-circle.orange { background: var(--soft-orange); color: var(--primary-orange); }
+.icon-circle.green { background: var(--soft-green); color: var(--primary-green); }
