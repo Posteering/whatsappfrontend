@@ -110,6 +110,29 @@ const Dashboard = () => {
   const fetchData = async (showRefresh = false) => {
     if (!vendorId) { navigate('/'); return; }
     if (showRefresh) setRefreshing(true); else setLoading(true);
+    
+    // DEV MODE INTERCEPT
+    if (import.meta.env.DEV && vendorId === 'dev-uuid-0000-0000') {
+      setTimeout(() => {
+        setData({
+          transactions: [
+            { order_id: "test-ord-1", status: "paid", total_amount: 5500 },
+            { order_id: "test-ord-2", status: "pending", total_amount: 12000 }
+          ]
+        });
+        setCatalog([
+          { id: "test-item-1", name: "Jollof Rice", price: 3500, description: "Spicy Nigerian Jollof", image_url: "" }
+        ]);
+        setBalance({
+          balance_ngn: 25000,
+          payment_account: { bank: "Mock Bank", account_number: "0123456789", account_name: "Developer Sandbox" }
+        });
+        setLoading(false);
+        setRefreshing(false);
+      }, 500); // simulate network delay
+      return;
+    }
+
     try {
       const [txRes, catRes, balRes] = await Promise.all([
         fetch(`${API_BASE}/vendor/${vendorId}/transactions`),
