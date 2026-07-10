@@ -27,11 +27,14 @@ export const loginUser = async (vendor_id, phone_number) => {
   }
   
   if (data.status === "success") {
-    localStorage.setItem('vendor_id',    data.vendor_id);
-    localStorage.setItem('vendor_name',  data.vendor_name  || 'Your Business');
-    localStorage.setItem('owner_name',   data.owner_name   || '');
-    localStorage.setItem('vendor_location', data.location  || '');
-    localStorage.setItem('vendor_rating',   data.rating    || '');
+    localStorage.setItem('vendor_id',       data.vendor_id);
+    localStorage.setItem('vendor_name',     data.vendor_name  || 'Your Business');
+    localStorage.setItem('owner_name',      data.owner_name   || '');
+    localStorage.setItem('vendor_location', data.location     || '');
+    localStorage.setItem('vendor_rating',   data.rating       || '');
+    if (data.payment_account) {
+      localStorage.setItem('payment_account', JSON.stringify(data.payment_account));
+    }
   }
   return data;
 };

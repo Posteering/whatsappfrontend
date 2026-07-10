@@ -1,16 +1,82 @@
-# React + Vite
+# VIOLET Vendor Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The vendor-facing React dashboard for the **VIOLET WhatsApp AI** platform.
 
-Currently, two official plugins are available:
+The backend is already live at  
+`https://whatsappbackend-production-9254.up.railway.app`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+You do **not** need to run a backend yourself. Just fork this, deploy it, and log in.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How to Log In
 
-## Expanding the ESLint configuration
+You need two things — both come from the VIOLET platform when your vendor account is created via WhatsApp:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Field | Where to find it |
+|---|---|
+| **Vendor ID** | Sent to you by the VIOLET admin after registration |
+| **WhatsApp Phone Number** | The phone number you used to register with VIOLET |
+
+> If you haven't registered yet, message the VIOLET WhatsApp bot to get started.
+
+---
+
+## Deploy to Vercel (Recommended — 3 minutes)
+
+1. Fork this repo on GitHub
+2. Go to [vercel.com](https://vercel.com) → **Add New Project** → import your fork
+3. Set the **Root Directory** to `frontend`
+4. During setup, add this **Environment Variable**:
+
+   | Name | Value |
+   |---|---|
+   | `VITE_API_BASE` | `https://whatsappbackend-production-9254.up.railway.app/api/v1` |
+
+5. Click **Deploy**. Done.
+
+---
+
+## Deploy to Netlify
+
+1. Fork this repo
+2. Go to [netlify.com](https://netlify.com) → **Add new site** → import from GitHub
+3. Set **Base directory**: `frontend`  
+   Set **Build command**: `npm run build`  
+   Set **Publish directory**: `frontend/dist`
+4. Under **Environment variables**, add:
+
+   | Key | Value |
+   |---|---|
+   | `VITE_API_BASE` | `https://whatsappbackend-production-9254.up.railway.app/api/v1` |
+
+5. Click **Deploy**. Done.
+
+---
+
+## Run Locally
+
+```bash
+git clone https://github.com/your-fork/violet-bot.git
+cd violet-bot/frontend
+
+cp .env.example .env
+# VITE_API_BASE is already set to the live backend — no changes needed
+
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` and log in with your Vendor ID and phone number.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | React 18 + Vite |
+| Routing | React Router v6 |
+| Icons | React Icons |
+| State | React Hooks + localStorage |
+| API | Fetch (via `authService.js`) |

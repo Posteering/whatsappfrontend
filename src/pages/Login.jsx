@@ -91,6 +91,33 @@ const Login = ({ setIsLoggedIn }) => {
           </button>
         </form>
 
+        {/* DEVELOPER MODE BYPASS */}
+        {import.meta.env.DEV && (
+          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <button 
+              type="button" 
+              className="btn-pill" 
+              style={{ background: '#333', color: '#fff', width: '100%' }}
+              onClick={() => {
+                localStorage.setItem('vendor_id', 'dev-uuid-0000-0000');
+                localStorage.setItem('vendor_name', 'Developer Sandbox');
+                localStorage.setItem('owner_name', 'Dev User');
+                localStorage.setItem('vendor_location', 'Localhost');
+                localStorage.setItem('vendor_rating', '5.0');
+                localStorage.setItem('payment_account', JSON.stringify({
+                  bank: "Mock Bank",
+                  account_number: "0000000000",
+                  account_name: "Developer Sandbox"
+                }));
+                setIsLoggedIn(true);
+                navigate('/home');
+              }}
+            >
+              🛠 Dev Mode: Auto-Login
+            </button>
+          </div>
+        )}
+
         <div className="login-footer">
           <p>New to WA.VENDOR? <Link to="/register">Create an account</Link></p>
         </div>

@@ -4,7 +4,7 @@ import {
   FiShoppingBag, FiDollarSign, FiPackage, FiTrash2,
   FiLogOut, FiRefreshCw, FiHome, FiList, FiGrid,
   FiTrendingUp, FiAlertCircle, FiCheckCircle, FiClock,
-  FiX
+  FiX, FiCreditCard, FiCopy, FiCheck
 } from 'react-icons/fi';
 import { HiOutlineSparkles } from 'react-icons/hi2';
 import './Dashboard.css';
@@ -85,8 +85,12 @@ const Dashboard = () => {
   const [ownerName]      = useState(localStorage.getItem('owner_name') || '');
   const [vendorLocation] = useState(localStorage.getItem('vendor_location') || '');
   const [vendorRating]   = useState(localStorage.getItem('vendor_rating') || '');
+  const [paymentAccount] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('payment_account') || 'null'); } catch { return null; }
+  });
   const [data, setData]  = useState(null);
   const [catalog, setCatalog] = useState([]);
+  const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
   const [activeTab, setActiveTab] = useState('overview');
@@ -95,19 +99,33 @@ const Dashboard = () => {
   const [newItem, setNewItem] = useState({ name: '', price: '', description: '', image_url: '' });
   const [isAdding, setIsAdding] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyAccountNumber = (num) => {
+    navigator.clipboard.writeText(num);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const fetchData = async (showRefresh = false) => {
     if (!vendorId) { navigate('/'); return; }
     if (showRefresh) setRefreshing(true); else setLoading(true);
     try {
-      const [txRes, catRes] = await Promise.all([
+      const [txRes, catRes, balRes] = await Promise.all([
         fetch(`${API_BASE}/vendor/${vendorId}/transactions`),
         fetch(`${API_BASE}/vendor/${vendorId}/catalog`),
+        fetch(`${API_BASE}/vendor/${vendorId}/balance`),
       ]);
       const txJson  = await txRes.json();
       const catJson = await catRes.json();
+      const balJson = balRes.ok ? await balRes.json() : null;
       setData(txJson);
       setCatalog(catJson.catalog || []);
+      setBalance(balJson);
+      // Keep localStorage payment_account fresh
+      if (balJson?.payment_account) {
+        localStorage.setItem('payment_account', JSON.stringify(balJson.payment_account));
+      }
     } catch (e) {
       setError('Could not reach the server. Make sure the backend is running.');
     } finally {
@@ -266,9 +284,10 @@ const Dashboard = () => {
 
         <nav className="sidebar-nav">
           {[
-            { id: 'overview',      label: 'Overview',     icon: <FiHome />    },
-            { id: 'catalog',       label: 'Catalogue',    icon: <FiGrid />    },
-            { id: 'transactions',  label: 'Transactions', icon: <FiList />    },
+            { id: 'overview',      label: 'Overview',     icon: <FiHome />       },
+            { id: 'payments',      label: 'Payments',     icon: <FiCreditCard /> },
+            { id: 'catalog',       label: 'Catalogue',    icon: <FiGrid />       },
+            { id: 'transactions',  label: 'Transactions', icon: <FiList />       },
           ].map(item => (
             <button
               key={item.id}
@@ -315,11 +334,48 @@ const Dashboard = () => {
         {activeTab === 'overview' && (
           <section className="tab-section">
             <div className="stats-grid">
-              <StatCard icon={<FiShoppingBag size={20}/>}  label="Total Orders"   value={totalOrders}  sub="All time"          color="#FF7A00" />
-              <StatCard icon={<FiDollarSign size={20}/>}   label="Total Revenue"  value={`₦${totalRevenue.toLocaleString()}`} sub="Paid orders only" color="#34A853" />
-              <StatCard icon={<FiPackage size={20}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"   color="#6366f1" />
-              <StatCard icon={<FiTrendingUp size={20}/>}   label="Paid Orders"    value={paidOrders}   sub="Completed"         color="#0ea5e9" />
+              <StatCard icon={<FiShoppingBag size={20}/>}  label="Total Orders"    value={totalOrders}  sub="All time"          color="#FF7A00" />
+              <StatCard icon={<FiDollarSign size={20}/>}   label="Ledger Balance"  value={balance ? `₦${(balance.balance_ngn || 0).toLocaleString()}` : '—'} sub="Available" color="#34A853" />
+              <StatCard icon={<FiPackage size={20}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"    color="#6366f1" />
+              <StatCard icon={<FiTrendingUp size={20}/>}   label="Paid Orders"     value={paidOrders}  sub="Completed"          color="#0ea5e9" />
             </div>
+
+            {/* Payment Account Card */}
+            {(paymentAccount || balance?.payment_account) && (() => {
+              const pa = balance?.payment_account || paymentAccount;
+              return (
+                <div className="section-block" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', border: '1px solid rgba(255,122,0,0.3)', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                    <FiCreditCard size={20} color="#FF7A00" />
+                    <h2 style={{ margin: 0, color: '#fff', fontSize: '1rem', fontWeight: 600 }}>Your Payment Account</h2>
+                    <span style={{ marginLeft: 'auto', background: '#FF7A0020', color: '#FF7A00', padding: '2px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600 }}>PROVIDUS BANK</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>Bank</span>
+                      <span style={{ color: '#fff', fontWeight: 500 }}>{pa.bank || 'Providus Bank'}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>Account Name</span>
+                      <span style={{ color: '#fff', fontWeight: 500 }}>{pa.account_name || vendorName}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,122,0,0.1)', borderRadius: '10px', border: '1px solid rgba(255,122,0,0.2)' }}>
+                      <div>
+                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', marginBottom: '2px' }}>Account Number</div>
+                        <div style={{ color: '#FF7A00', fontSize: '1.4rem', fontWeight: 700, letterSpacing: '2px', fontFamily: 'monospace' }}>{pa.account_number}</div>
+                      </div>
+                      <button
+                        onClick={() => copyAccountNumber(pa.account_number)}
+                        style={{ background: copied ? '#34A853' : 'rgba(255,122,0,0.2)', border: '1px solid', borderColor: copied ? '#34A853' : 'rgba(255,122,0,0.4)', color: copied ? '#fff' : '#FF7A00', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}
+                      >
+                        {copied ? <><FiCheck size={14}/> Copied!</> : <><FiCopy size={14}/> Copy</>}
+                      </button>
+                    </div>
+                  </div>
+                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', marginTop: '12px', marginBottom: 0 }}>Customers transfer to this account — your balance updates automatically.</p>
+                </div>
+              );
+            })()}
 
             {/* Recent snapshot */}
             <div className="section-block">
@@ -378,6 +434,53 @@ const Dashboard = () => {
             </div>
           </section>
         )}
+
+      {/* PAYMENTS TAB */}
+      {activeTab === 'payments' && (() => {
+        const pa = balance?.payment_account || paymentAccount;
+        return (
+          <section className="tab-section">
+            <div className="section-block">
+              <div className="section-header"><h2>Payment Account</h2></div>
+              {pa ? (
+                <div style={{ maxWidth: '500px' }}>
+                  <div style={{ background: 'linear-gradient(135deg,#1a1a2e,#0f3460)', borderRadius: '20px', padding: '32px', border: '1px solid rgba(255,122,0,0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+                      <FiCreditCard size={24} color="#FF7A00" />
+                      <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem' }}>Providus Bank</span>
+                    </div>
+                    {[['Bank', pa.bank || 'Providus Bank'], ['Account Name', pa.account_name || vendorName], ['Bank Code', pa.bank_code || '101']].map(([label, val]) => (
+                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{label}</span>
+                        <span style={{ color: '#fff', fontWeight: 500 }}>{val}</span>
+                      </div>
+                    ))}
+                    <div style={{ background: 'rgba(255,122,0,0.12)', borderRadius: '12px', padding: '20px', marginTop: '16px', border: '1px solid rgba(255,122,0,0.25)', textAlign: 'center' }}>
+                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginBottom: '6px' }}>Account Number</div>
+                      <div style={{ color: '#FF7A00', fontSize: '2rem', fontWeight: 800, letterSpacing: '4px', fontFamily: 'monospace' }}>{pa.account_number}</div>
+                      <button onClick={() => copyAccountNumber(pa.account_number)} style={{ marginTop: '14px', background: copied ? '#34A853' : '#FF7A00', color: '#fff', border: 'none', padding: '10px 28px', borderRadius: '50px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}>
+                        {copied ? <><FiCheck size={16}/> Copied!</> : <><FiCopy size={16}/> Copy Account Number</>}
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '24px', padding: '20px', background: 'var(--surface,#f8f9fa)', borderRadius: '12px', border: '1px solid var(--border,#e5e7eb)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: '#999', marginBottom: '4px' }}>Ledger Balance</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#34A853' }}>₦{(balance?.balance_ngn || 0).toLocaleString()}</div>
+                      </div>
+                      <FiDollarSign size={32} color="#34A85330" />
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '8px', marginBottom: 0 }}>Balance updates when customers pay into your account.</p>
+                  </div>
+                </div>
+              ) : (
+                <EmptyState icon={<FiCreditCard size={44}/>} title="No payment account yet" sub="Register your vendor profile via WhatsApp to get your dedicated Providus Bank account." />
+              )}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* CATALOGUE TAB */}
         {activeTab === 'catalog' && (
