@@ -360,27 +360,31 @@ const Dashboard = () => {
               {vendorLocation && <p className="topbar-sub">📍 {vendorLocation}</p>}
             </div>
           </div>
-          <button
-            className={`btn-pill btn-ghost refresh-btn ${refreshing ? 'spinning' : ''}`}
-            onClick={() => fetchData(true)}
-            title="Refresh data"
-          >
-            <FiRefreshCw size={16} />
-            {refreshing ? 'Refreshing…' : 'Refresh'}
-          </button>
+          <div className="topbar-actions">
+            <button
+              className="btn-pill btn-ghost topbar-tx-btn"
+              onClick={() => setActiveTab('transactions')}
+              title="View recent transactions"
+            >
+              <FiList size={14} />
+              Recent Transactions
+            </button>
+            <button
+              className={`btn-pill btn-ghost refresh-btn ${refreshing ? 'spinning' : ''}`}
+              onClick={() => fetchData(true)}
+              title="Refresh data"
+            >
+              <FiRefreshCw size={16} />
+              {refreshing ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
         </header>
 
         {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <section className="tab-section">
-            <div className="stats-grid">
-              <StatCard icon={<FiShoppingBag size={18}/>}  label="Total Orders"    value={totalOrders}  sub="All time"          color="#FF7A00" />
-              <StatCard icon={<FiDollarSign size={18}/>}   label="Ledger Balance"  value={balance ? `₦${(balance.balance_ngn || 0).toLocaleString()}` : '—'} sub="Available" color="#34A853" />
-              <StatCard icon={<FiPackage size={18}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"    color="#6366f1" />
-              <StatCard icon={<FiTrendingUp size={18}/>}   label="Paid Orders"     value={paidOrders}  sub="Completed"          color="#0ea5e9" />
-            </div>
 
-            {/* Payment Account Card */}
+            {/* Payment Account Card — now shown first */}
             {(paymentAccount || balance?.payment_account) && (() => {
               const pa = balance?.payment_account || paymentAccount;
               return (
@@ -417,34 +421,11 @@ const Dashboard = () => {
               );
             })()}
 
-            {/* Recent snapshot */}
-            <div className="section-block">
-              <div className="section-header">
-                <h2>Recent Transactions</h2>
-                <button className="text-link" onClick={() => setActiveTab('transactions')}>View all →</button>
-              </div>
-              {data?.transactions?.length === 0 ? (
-                <EmptyState icon={<FiList size={36}/>} title="No transactions yet" sub="Once customers place orders, they will appear here." />
-              ) : (
-                <table className="pro-table">
-                  <thead>
-                    <tr>
-                      <th>Order ID</th>
-                      <th>Status</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data?.transactions?.slice(0, 5).map(tx => (
-                      <tr key={tx.order_id}>
-                        <td><span className="mono">#{tx.order_id?.split('-')[0]?.toUpperCase()}</span></td>
-                        <td><StatusBadge status={tx.status} /></td>
-                        <td className="amount-cell">₦{tx.total_amount?.toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+            <div className="stats-grid">
+              <StatCard icon={<FiShoppingBag size={16}/>}  label="Total Orders"    value={totalOrders}  sub="All time"          color="#FF7A00" />
+              <StatCard icon={<FiDollarSign size={16}/>}   label="Ledger Balance"  value={balance ? `₦${(balance.balance_ngn || 0).toLocaleString()}` : '—'} sub="Available" color="#34A853" />
+              <StatCard icon={<FiPackage size={16}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"    color="#6366f1" />
+              <StatCard icon={<FiTrendingUp size={16}/>}   label="Paid Orders"     value={paidOrders}  sub="Completed"          color="#0ea5e9" />
             </div>
 
             {/* Catalog snapshot */}

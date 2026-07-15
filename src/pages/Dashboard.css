@@ -167,12 +167,14 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  gap: 16px;
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .hamburger-btn {
@@ -204,6 +206,9 @@
   font-weight: 800;
   color: #111;
   letter-spacing: -0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbar-sub {
@@ -233,6 +238,21 @@
 .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ============ TOPBAR ACTIONS ============ */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.topbar-tx-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* ============ TAB SECTION ============ */
 .tab-section {
   padding: 22px 28px 50px;
@@ -244,34 +264,43 @@
   margin: 0 auto;
 }
 
-/* ============ STAT CARDS ============ */
+/* ============ UTILITY LAYOUTS ============ */
+/* Wrap your payment account and the card next to it in a div with this class */
+.grid-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+/* ============ STAT CARDS — now 2 per row ============ */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
 .stat-card-pro {
   background: #fff;
-  border-radius: 14px;
-  padding: 16px 16px;
+  border-radius: 12px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   border: 1px solid #f0f0f0;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-card-pro:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.07);
 }
 
 .stat-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,9 +308,9 @@
 }
 
 .stat-info { display: flex; flex-direction: column; }
-.stat-label { font-size: 0.66rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
-.stat-value { font-size: 1.25rem; font-weight: 800; color: #111; margin: 2px 0; letter-spacing: -0.6px; }
-.stat-sub { font-size: 0.66rem; color: #bbb; font-weight: 500; }
+.stat-label { font-size: 0.62rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.stat-value { font-size: 1.05rem; font-weight: 800; color: #111; margin: 1px 0; letter-spacing: -0.5px; }
+.stat-sub { font-size: 0.62rem; color: #bbb; font-weight: 500; }
 
 /* ============ SECTION BLOCKS ============ */
 .section-block {
@@ -462,6 +491,8 @@
   border: 1px solid rgba(255,122,0,0.3);
   border-radius: 16px;
   padding: 18px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .payment-account-header {
@@ -567,7 +598,7 @@
 
 /* ============ PAYMENTS TAB ============ */
 .payments-tab-wrap {
-  max-width: 460px;
+  width: 100%;
 }
 
 .payments-tab-card {
@@ -575,6 +606,7 @@
   border-radius: 16px;
   padding: 24px;
   border: 1px solid rgba(255,122,0,0.3);
+  box-sizing: border-box;
 }
 
 .payments-tab-card-header {
@@ -878,17 +910,29 @@
   .tab-section { padding: 18px 20px 40px; }
 }
 
+@media (max-width: 900px) {
+  /* Cards collapse to vertical stacked configuration on smaller viewports */
+  .grid-two-col {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .dash-root { flex-direction: column; }
-  .dash-topbar { flex-wrap: wrap; gap: 10px; }
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dash-topbar { flex-wrap: wrap; gap: 12px; }
+  .topbar-actions { width: 100%; justify-content: flex-start; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .catalog-grid-mini { grid-template-columns: 1fr 1fr; }
   .table-responsive { overflow-x: auto; }
   .payment-account-number-box { flex-direction: column; align-items: flex-start; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 550px) {
   .stats-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
   .catalog-grid-mini { grid-template-columns: 1fr; }
   .topbar-title { font-size: 1.05rem; }
 }
