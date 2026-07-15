@@ -4,7 +4,7 @@ import {
   FiShoppingBag, FiDollarSign, FiPackage, FiTrash2,
   FiLogOut, FiRefreshCw, FiHome, FiList, FiGrid,
   FiTrendingUp, FiAlertCircle, FiCheckCircle, FiClock,
-  FiX, FiCreditCard, FiCopy, FiCheck
+  FiX, FiCreditCard, FiCopy, FiCheck, FiMenu
 } from 'react-icons/fi';
 import { HiOutlineSparkles } from 'react-icons/hi2';
 import './Dashboard.css';
@@ -100,6 +100,7 @@ const Dashboard = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const copyAccountNumber = (num) => {
     navigator.clipboard.writeText(num);
@@ -231,6 +232,11 @@ const Dashboard = () => {
     }
   };
 
+  const handleNavClick = (id) => {
+    setActiveTab(id);
+    setSidebarOpen(false); // auto-close drawer on mobile after picking a tab
+  };
+
   // Stats derived from data
   const totalOrders   = data?.transactions?.length || 0;
   const totalRevenue  = data?.transactions?.reduce((s, t) => s + (t.total_amount || 0), 0) || 0;
@@ -285,11 +291,17 @@ const Dashboard = () => {
 
   return (
     <div className="dash-root">
+      {/* MOBILE/TABLET OVERLAY (click to close drawer) */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+
       {/* SIDEBAR */}
-      <aside className="dash-sidebar">
+      <aside className={`dash-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-brand" onClick={() => navigate('/')}>
           <HiOutlineSparkles size={22} />
           <span>WA.VENDOR</span>
+          <button className="sidebar-close-btn" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
+            <FiX size={18} />
+          </button>
         </div>
 
         {/* Vendor Profile Card in Sidebar */}
@@ -315,7 +327,7 @@ const Dashboard = () => {
             <button
               key={item.id}
               className={`sidebar-link ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleNavClick(item.id)}
             >
               {item.icon} <span>{item.label}</span>
             </button>
@@ -336,12 +348,17 @@ const Dashboard = () => {
       <main className="dash-main">
         {/* TOPBAR */}
         <header className="dash-topbar">
-          <div>
-            <p className="topbar-greeting">
-              {getGreeting()}{ownerName ? `, ${ownerName}` : ''} 👋
-            </p>
-            <h1 className="topbar-title">{vendorName}</h1>
-            {vendorLocation && <p className="topbar-sub">📍 {vendorLocation}</p>}
+          <div className="topbar-left">
+            <button className="hamburger-btn" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
+              <FiMenu size={20} />
+            </button>
+            <div>
+              <p className="topbar-greeting">
+                {getGreeting()}{ownerName ? `, ${ownerName}` : ''} 👋
+              </p>
+              <h1 className="topbar-title">{vendorName}</h1>
+              {vendorLocation && <p className="topbar-sub">📍 {vendorLocation}</p>}
+            </div>
           </div>
           <button
             className={`btn-pill btn-ghost refresh-btn ${refreshing ? 'spinning' : ''}`}
@@ -357,45 +374,45 @@ const Dashboard = () => {
         {activeTab === 'overview' && (
           <section className="tab-section">
             <div className="stats-grid">
-              <StatCard icon={<FiShoppingBag size={20}/>}  label="Total Orders"    value={totalOrders}  sub="All time"          color="#FF7A00" />
-              <StatCard icon={<FiDollarSign size={20}/>}   label="Ledger Balance"  value={balance ? `₦${(balance.balance_ngn || 0).toLocaleString()}` : '—'} sub="Available" color="#34A853" />
-              <StatCard icon={<FiPackage size={20}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"    color="#6366f1" />
-              <StatCard icon={<FiTrendingUp size={20}/>}   label="Paid Orders"     value={paidOrders}  sub="Completed"          color="#0ea5e9" />
+              <StatCard icon={<FiShoppingBag size={18}/>}  label="Total Orders"    value={totalOrders}  sub="All time"          color="#FF7A00" />
+              <StatCard icon={<FiDollarSign size={18}/>}   label="Ledger Balance"  value={balance ? `₦${(balance.balance_ngn || 0).toLocaleString()}` : '—'} sub="Available" color="#34A853" />
+              <StatCard icon={<FiPackage size={18}/>}      label="Catalogue Items" value={catalogCount} sub="Active listings"    color="#6366f1" />
+              <StatCard icon={<FiTrendingUp size={18}/>}   label="Paid Orders"     value={paidOrders}  sub="Completed"          color="#0ea5e9" />
             </div>
 
             {/* Payment Account Card */}
             {(paymentAccount || balance?.payment_account) && (() => {
               const pa = balance?.payment_account || paymentAccount;
               return (
-                <div className="section-block" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', border: '1px solid rgba(255,122,0,0.3)', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                    <FiCreditCard size={20} color="#FF7A00" />
-                    <h2 style={{ margin: 0, color: '#fff', fontSize: '1rem', fontWeight: 600 }}>Your Payment Account</h2>
-                    <span style={{ marginLeft: 'auto', background: '#FF7A0020', color: '#FF7A00', padding: '2px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600 }}>PROVIDUS BANK</span>
+                <div className="payment-account-card">
+                  <div className="payment-account-header">
+                    <FiCreditCard size={16} color="#FF7A00" />
+                    <h2>Your Payment Account</h2>
+                    <span className="payment-bank-tag">PROVIDUS BANK</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>Bank</span>
-                      <span style={{ color: '#fff', fontWeight: 500 }}>{pa.bank || 'Providus Bank'}</span>
+                  <div className="payment-account-rows">
+                    <div className="payment-account-row">
+                      <span className="payment-account-row-label">Bank</span>
+                      <span className="payment-account-row-value">{pa.bank || 'Providus Bank'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>Account Name</span>
-                      <span style={{ color: '#fff', fontWeight: 500 }}>{pa.account_name || vendorName}</span>
+                    <div className="payment-account-row">
+                      <span className="payment-account-row-label">Account Name</span>
+                      <span className="payment-account-row-value">{pa.account_name || vendorName}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,122,0,0.1)', borderRadius: '10px', border: '1px solid rgba(255,122,0,0.2)' }}>
+                    <div className="payment-account-number-box">
                       <div>
-                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', marginBottom: '2px' }}>Account Number</div>
-                        <div style={{ color: '#FF7A00', fontSize: '1.4rem', fontWeight: 700, letterSpacing: '2px', fontFamily: 'monospace' }}>{pa.account_number}</div>
+                        <div className="payment-account-number-label">Account Number</div>
+                        <div className="payment-account-number">{pa.account_number}</div>
                       </div>
                       <button
                         onClick={() => copyAccountNumber(pa.account_number)}
-                        style={{ background: copied ? '#34A853' : 'rgba(255,122,0,0.2)', border: '1px solid', borderColor: copied ? '#34A853' : 'rgba(255,122,0,0.4)', color: copied ? '#fff' : '#FF7A00', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}
+                        className={`payment-copy-btn ${copied ? 'copied' : ''}`}
                       >
-                        {copied ? <><FiCheck size={14}/> Copied!</> : <><FiCopy size={14}/> Copy</>}
+                        {copied ? <><FiCheck size={13}/> Copied!</> : <><FiCopy size={13}/> Copy</>}
                       </button>
                     </div>
                   </div>
-                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', marginTop: '12px', marginBottom: 0 }}>Customers transfer to this account — your balance updates automatically.</p>
+                  <p className="payment-account-note">Customers transfer to this account — your balance updates automatically.</p>
                 </div>
               );
             })()}
@@ -444,7 +461,7 @@ const Dashboard = () => {
                     <div className="catalog-mini-card" key={item.id}>
                       {item.image_url
                         ? <img src={item.image_url} alt={item.name} className="catalog-mini-img" />
-                        : <div className="catalog-mini-placeholder"><FiPackage size={28}/></div>
+                        : <div className="catalog-mini-placeholder"><FiPackage size={24}/></div>
                       }
                       <div className="catalog-mini-info">
                         <span className="catalog-mini-name">{item.name}</span>
@@ -466,35 +483,35 @@ const Dashboard = () => {
             <div className="section-block">
               <div className="section-header"><h2>Payment Account</h2></div>
               {pa ? (
-                <div style={{ maxWidth: '500px' }}>
-                  <div style={{ background: 'linear-gradient(135deg,#1a1a2e,#0f3460)', borderRadius: '20px', padding: '32px', border: '1px solid rgba(255,122,0,0.3)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
-                      <FiCreditCard size={24} color="#FF7A00" />
-                      <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem' }}>Providus Bank</span>
+                <div className="payments-tab-wrap">
+                  <div className="payments-tab-card">
+                    <div className="payments-tab-card-header">
+                      <FiCreditCard size={20} color="#FF7A00" />
+                      <span>Providus Bank</span>
                     </div>
                     {[['Bank', pa.bank || 'Providus Bank'], ['Account Name', pa.account_name || vendorName], ['Bank Code', pa.bank_code || '101']].map(([label, val]) => (
-                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{label}</span>
-                        <span style={{ color: '#fff', fontWeight: 500 }}>{val}</span>
+                      <div key={label} className="payments-tab-row">
+                        <span className="payments-tab-row-label">{label}</span>
+                        <span className="payments-tab-row-value">{val}</span>
                       </div>
                     ))}
-                    <div style={{ background: 'rgba(255,122,0,0.12)', borderRadius: '12px', padding: '20px', marginTop: '16px', border: '1px solid rgba(255,122,0,0.25)', textAlign: 'center' }}>
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginBottom: '6px' }}>Account Number</div>
-                      <div style={{ color: '#FF7A00', fontSize: '2rem', fontWeight: 800, letterSpacing: '4px', fontFamily: 'monospace' }}>{pa.account_number}</div>
-                      <button onClick={() => copyAccountNumber(pa.account_number)} style={{ marginTop: '14px', background: copied ? '#34A853' : '#FF7A00', color: '#fff', border: 'none', padding: '10px 28px', borderRadius: '50px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}>
-                        {copied ? <><FiCheck size={16}/> Copied!</> : <><FiCopy size={16}/> Copy Account Number</>}
+                    <div className="payments-tab-number-box">
+                      <div className="payments-tab-number-label">Account Number</div>
+                      <div className="payments-tab-number">{pa.account_number}</div>
+                      <button onClick={() => copyAccountNumber(pa.account_number)} className={`payments-tab-copy-btn ${copied ? 'copied' : ''}`}>
+                        {copied ? <><FiCheck size={14}/> Copied!</> : <><FiCopy size={14}/> Copy Account Number</>}
                       </button>
                     </div>
                   </div>
-                  <div style={{ marginTop: '24px', padding: '20px', background: 'var(--surface,#f8f9fa)', borderRadius: '12px', border: '1px solid var(--border,#e5e7eb)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="payments-tab-balance">
+                    <div className="payments-tab-balance-row">
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: '#999', marginBottom: '4px' }}>Ledger Balance</div>
-                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#34A853' }}>₦{(balance?.balance_ngn || 0).toLocaleString()}</div>
+                        <div className="payments-tab-balance-label">Ledger Balance</div>
+                        <div className="payments-tab-balance-value">₦{(balance?.balance_ngn || 0).toLocaleString()}</div>
                       </div>
-                      <FiDollarSign size={32} color="#34A85330" />
+                      <FiDollarSign size={26} color="#34A85330" />
                     </div>
-                    <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '8px', marginBottom: 0 }}>Balance updates when customers pay into your account.</p>
+                    <p className="payments-tab-balance-note">Balance updates when customers pay into your account.</p>
                   </div>
                 </div>
               ) : (
